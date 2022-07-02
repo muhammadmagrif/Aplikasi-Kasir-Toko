@@ -1,0 +1,35 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<form th:action="@{~/variant/save}" th:object="${variant}" method="post">
+<input type="hidden" th:field="*{Id}">
+	<table class="table table-bordered table-light" >
+		<tr>
+			<td>Category Id</td>
+			<td>
+				<select class="form-select" th:field="*{Category_id}" required>
+					<option value="">Select Category</option>
+					<option th:each="item : ${category}" th:value="${item.Id}" th:text="${item.Name}"></option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>Initial</td>
+			<td><input type="text" th:field="*{Initial}" class="form-control" required></td>
+		</tr>
+		<tr>
+			<td>Name</td>
+			<td><input type="text" th:field="*{Name}" class="form-control" required></td>
+		</tr>
+		<tr>
+			<td>Active</td>
+			<td><input class="form-check-input" type="checkbox" th:field="*{Active}">Active?</td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<button type="submit" class="btn btn-success">Simpan</button>
+			</td>
+		</tr>
+	</table>
+</form>
+
+</html>

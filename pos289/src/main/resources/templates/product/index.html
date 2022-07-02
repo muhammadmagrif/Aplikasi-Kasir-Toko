@@ -1,0 +1,335 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/layout}">
+<head>
+	<title>POS::Produk</title>
+	
+</head>
+<body>
+
+<div layout:fragment="content">
+	<h1>Halaman Produk</h1>
+	
+	<p align="right">
+		<button class="btn btn-primary" onclick="topdf()"><i class="fa fas fa-cloud-download"></i> Ekspor Ke PDF</button>
+		<button class="btn btn-success" onclick="addform()"><i class="fa fas fa-plus-circle"></i> Tambah Produk</button>
+	</p>
+	
+	<table class="table table-striped" id="myTable">
+		<thead>
+			<tr>
+				<th>Category/<br>Variant</th>
+				<th>Initial</th>
+				<th>Name</th>
+				<th>Description</th>
+				<th>Price</th>
+				<th>Stock</th>
+				<th>Active</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody id="dataproduct">
+		</tbody>
+	</table>
+	
+<script>
+	reloadData();
+	
+	function reloadData(){
+		$.ajax({
+			url:'/api/product',
+			type:'get',
+			contentType:'application/json',
+			success:function(result){
+				//console.log(result)
+				var str = '';
+				for(i=0; i<result.length; i++){
+					str += '<tr>'
+					str += '<td>'+ result[i].variant.name + '<br>' + result[i].variant.category.name +'</td>'
+					str += '<td>'+ result[i].initial +'</td>'
+					str += '<td>'+ result[i].name +'</td>'
+					str += '<td>'+ result[i].description +'</td>'
+					str += '<td>'+ result[i].price +'</td>'
+					str += '<td>'+ result[i].stock +'</td>'
+					str += '<td>'
+					
+					if(result[i].active==true){
+						str += '<input type="checkbox" class="form-check-input" id="active" checked disabled>'
+					}else{
+						str += '<input type="checkbox" class="form-check-input" id="active" disabled>'
+					}
+					str += '</td>'
+					str += '<td>'
+					str += '<button class="btn btn-warning" value="' + result[i].id + '" onclick="editform(this.value)" >' + '<span class="btn-label"><i class="fa fa-pencil-square-o"></i></span></button>'
+					str += '<button class="btn btn-danger" value="' + result[i].id + '" onclick="deleteform(this.value)" >' + '<span class="btn-label"><i class="fa fa-trash"></i></span></button>'
+					str += '<button class="btn btn-danger" value="' + result[i].id + '" onclick="delete_(this.value)" >' + '<span class="btn-label"><i class="fa fas fa-ban"></i></span></button>'
+					str += '</td>'
+					str += '</tr>'
+				}
+				$('#dataproduct').html(str)
+			}
+		})
+		$(document).ready( function () {
+    		$('#myTable').DataTable();
+		})
+	}
+	
+	function addform(){
+		var form = '<table class="table">'
+		form += '<tr>'
+		form += '<td>Category</td><td><select class="form-select" id="catsel" onclick="getvariant(this.value)"></select></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Variant</td><td><select class="form-select" id="varsel"><option selected>Masukkan Varian</option></select></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Initial</td><td><input class="form-control" type="text" id="initial"></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Name</td><td><input class="form-control" type="text" id="name"></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Description</td><td><textarea class="form-control" type="text" id="description"></textarea></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Price</td><td><input class="form-control" type="text" id="price"></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Stock</td><td><input class="form-control" type="text" id="stock"></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Active</td><td><input class="form-check-input" type="checkbox" id="active">Active?</td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td colspan="2"><button class="btn btn-success" onclick="save()">Submit</button></td>'
+		form += '</tr>' 
+		form += '</table>' 
+		
+		$('#mymodal').modal('show')
+		$('.modal-title').html('Tambah Data Produk')
+		$('.modal-body').html(form)
+		
+		$.ajax({
+			url:'/api/category',
+			type:'get',
+			contentType:'application/json',
+			success:function(category){
+				var optcat = '';
+				for(i=0; i<category.length; i++){
+					optcat += '<option value="'+ category[i].id +'">'+category[i].name+'</option>'
+				}			
+				$('#catsel').html(optcat)
+			}
+		})
+	}
+	
+	function getvariant(catid){
+		$.ajax({
+			url:'/api/getvarbycatid/'+ catid,
+			type:'get',
+			contentType:'application/json',
+			success:function(variant){
+				var optvar = ''
+				for(i=0; i<variant.length; i++){
+					optvar += '<option value="'+ variant[i].id +'">'+variant[i].name+'</option>'
+				}			
+				$('#varsel').html(optvar)
+			}
+		})
+	}
+	
+	function editform(id){
+		$.ajax({
+			url:'/api/product/'+id,
+			type:'get',
+			contentType:'application/json',
+			success:function(product){
+				//console.log(product) //melihat isi product
+				var form = '<table class="table">'
+				form += '<tr>'
+				form += '<td>Category</td><td><select class="form-select" id="catsel" onclick="getvariant(this.value)"></select></td>'
+				form += '</tr>'
+				form += '<tr>'
+				form += '<td>Variant</td><td><select class="form-select" id="varsel"><option selected>Masukkan Varian</option></select></td>'
+				form += '</tr>'
+				form += '<tr>'
+				form += '<td>Initial</td><td><input class="form-control" type="text" id="initial" value="' + product.initial + '"></td>'
+				form += '</tr>'
+				form += '<tr>'
+				form += '<td>Name</td><td><input class="form-control" type="text" id="name" value="' + product.name + '"></td>'
+				form += '</tr>'
+				form += '<tr>'
+				form += '<td>Description</td><td><input class="form-control" id="description" value="' + product.description + '"></td>'
+				form += '</tr>'
+				form += '<tr>'
+				form += '<td>Price</td><td><input class="form-control" type="text" id="price" value="' + product.price + '"></td>'
+				form += '</tr>'
+				form += '<tr>'
+				form += '<td>Stock</td><td><input class="form-control" type="text" id="stock" value="' + product.stock + '"></td>'
+				form += '</tr>'
+				form += '<tr>'
+				form += '<td>Active</td><td><input class="form-check-input" type="checkbox" id="active" value="' + product.active + '"></td>'
+				form += '</tr>'
+				form += '<tr>'
+				form += '<td colspan="2"><button class="btn btn-success" value="' + product.id + '" onclick="saveEdit(this.value)">Simpan</button></td>'
+				form += '</tr>' 
+				form += '</table>' 
+				
+				$("#mymodal").modal('show')
+				$(".modal-title").html('Ubah Data Produk')
+				$(".modal-body").html(form)
+				
+				if(product.active==true){
+					document.getElementById('active').checked = true;
+				}else{
+					document.getElementById('active').checked = false;
+				}
+				
+				$.ajax({
+					url:'/api/category/',
+					type:'get',
+					contentType:'application/json',
+					success:function(category){
+						var optcat = '';
+						for(i=0; i<category.length; i++){
+							optcat += '<option value="'+ category[i].id +'">'+category[i].name+'</option>'
+						}			
+						$('#catsel').html(optcat)
+						$('#catsel').val(product.variant.category.id)
+					}
+				})
+				
+				$.ajax({
+					url:'/api/variant/',
+					type:'get',
+					contentType:'application/json',
+					success:function(variant){
+						var optvar = '';
+						for(i=0; i<variant.length; i++){
+							optvar += '<option value="'+ variant[i].id +'">'+variant[i].name+'</option>'
+						}			
+						$('#varsel').html(optvar)
+						$('#varsel').val(product.variant_id)
+					}
+				})
+				//console.log('test[\'array\']')
+			}
+		})
+	}
+	function deleteform(id){
+		$.ajax({
+			url:'/api/product/' + id,
+			type:'get',
+			contentType:'application/json',
+			success:function(product){
+				//console.log(product) //melihat isi result
+				var del = '<p>Anda yakin mau menghapus data ini ?</p>'
+				del += '<span>Initial : </span><span>' + product.initial + '</span><br>'
+				del += '<span>Name : </span><span>' + product.name + '</span><br>'
+				del += '<span>Description : </span><span>' + product.description + '</span><br>'
+				del += '<span>Price : </span><span>' + product.price + '</span><br>'
+				del += '<span>Stock : </span><span>' + product.stock + '</span><br><br>'
+				del += '<button class="btn btn-warning" onclick="javascript:location.replace(\'/product/index\')">Cancel</button>'
+				del += '<button class="btn btn-danger" value="'+product.id+'" onclick="delete_(this.value)">Delete</button>'
+				
+				$("#mymodal").modal('show')
+				$(".modal-title").html('Delete Confirmation')
+				$(".modal-body").html(del)
+			}
+		})
+	}
+	
+	function delete_(id){
+		var conf = window.confirm('Apakah Anda Yakin Ingin Menghapus Data Ini?')
+		if(conf){
+			$.ajax({
+				url:'/api/deleteProduct/' + id,
+				type:'delete',
+				contentType:'application/json',
+				success:function(product){
+					conf = window.confirm("Data Telah Dihapus")
+					console.log(product)
+					location.replace('/product/index')
+					//reloadData()
+				}
+			})
+		}
+	}
+	
+	function save(){
+		var activeValue = true;
+		var checkbox = document.getElementById("active")
+		if(checkbox.checked == true){
+			activeValue = true
+		}else{
+			activeValue = false
+		}
+		
+		var json='{'
+		json += '"variant_id":"'+ $('#varsel').val() +'",'
+		json += '"initial":"'+ $('#initial').val() +'",'
+		json += '"name":"'+ $('#name').val() +'",'
+		json += '"description":"'+ $('#description').val() +'",'
+		json += '"price":'+ $('#price').val() +','
+		json += '"stock":'+ $('#stock').val() +',' 
+		json += '"active":' + activeValue
+		json += '}'
+		console.log(json) //untuk melihat hasil dari output variabel json di dalam console browser
+		
+		$.ajax({
+			url:'/api/insertProduct/',
+			type:'post',
+			data:json,
+			contentType:'application/json',
+			success:function(product){
+				console.log(product)
+				//location.replace('/product/index')
+				$('#mymodal').modal('hide')
+				reloadData()
+			}
+		})
+	}
+	
+	function saveEdit(id){
+		var activeValue = true;
+		var checkbox = document.getElementById("active")
+		if(checkbox.checked == true){
+			activeValue = true;
+		}else{
+			activeValue = false;
+		}
+		
+		var json='{'
+		json += '"variant_id":"'+ $('#varsel').val() +'",'
+		json += '"initial":"'+ $('#initial').val() +'",'
+		json += '"name":"'+ $('#name').val() +'",'
+		json += '"description":"'+ $('#description').val() +'",'
+		json += '"price":'+ $('#price').val() +','
+		json += '"stock":'+ $('#stock').val() +',' 
+		json += '"active":' + activeValue
+		json += '}'
+		//console.log(json) //untuk melihat hasil dari output variabel json di dalam console browser
+		
+		$.ajax({
+			url:'/api/editProduct/' + id,
+			type:'put',
+			data:json,
+			contentType:'application/json',
+			success:function(result){
+				console.log("Data Berhasil Diubah")
+				location.replace('/product/index')
+				//$('#mymodal').modal('hide')
+				//reloadData()
+			}
+		})
+	}
+	
+	function topdf(){
+		window.open('/product/exportproduct', '_blank');
+	}
+</script>
+
+</div>
+
+</body>
+</html>

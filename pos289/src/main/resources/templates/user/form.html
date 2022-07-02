@@ -1,0 +1,101 @@
+<html lang="en" xmlns="http://www.thymeleaf.org">
+
+<form name="myform" th:action="@{~/user/save}" th:object="${user}" method="POST" enctype="multipart/form-data" onsubmit="return validate()">
+<input type="hidden" th:field="*{Id}" value="${Id}">
+<table class="table">
+<tr>
+	<td class="required">Email</td>
+	<td>
+		<input type="email" th:field="*{Email}" size="40" class="form-control" value="${Email}" onchange="hidemessage()" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" required>
+		<span class="valid" id="validateEmail"></span>
+	</td>
+</tr>
+<tr>
+	<td class="required">Username</td>
+	<td>
+		<input type="text" th:field="*{Username}" size="40" class="form-control" value="${Username}" onchange="hidemessage()" required>
+		<span class="valid" id="validatename"></span>
+	</td>
+</tr>
+<tr>
+	<td class="required">Password</td>
+	<td>
+		<input type="password" th:field="*{Password}" size="40" class="form-control" value="${Password}" onchange="hidemessage()" id="myInput" required> 
+		<span class="valid" id="validatepass"></span>	
+		<input class="form-check-input" type="checkbox" onclick="viewPassword()"> Show Password
+	</td>
+</tr>
+<tr>
+	<td class="required">Full Name</td>
+	<td>
+		<input type="text" th:field="*{Fullname}" size="40" class="form-control" value="${Fullname}" onchange="hidemessage()" required>
+		<span class="valid" id="validatefullname"></span>
+	</td>
+</tr>
+<tr>
+	<td>Photo</td>
+	<td>
+		<input type="text" th:field="*{Photo}" id="phototext" class="form-control" th:value="${Photo}" readonly>
+		<input type="file" id="filename" name="photofile" onchange="readurl(this)" class="form-control" required>
+		<br><img src="#" id="avatar" alt="Photo" height="80">
+	</td>
+</tr>
+<tr>
+	<td colspan="2">
+		<p align="right">
+			<input type="submit" class="btn btn-primary" value="Simpan Data">
+		</p>
+	</td>
+</tr>
+</table>
+</form>
+<script>
+function readurl(input){
+	if(input.files && input.files[0]){
+		var reader = new FileReader();
+		
+		reader.onload = function (e){
+			$('#avatar').attr('src', e.target.result);
+			$('#phototext').val($('input[type=file]').val().replace(/C:\\fakepath\\/i,''))
+		};
+		reader.readAsDataURL(input.files[0]);
+	}
+}
+
+function validate(){
+	var email = document.forms["myform"]["Email"].value;
+	console.log(email.length)
+	if(email == "" || email.length < 3 || email.length > 200){
+		$('#validateemail').html("Email harus diisi... min 3 max 200 karakter")
+		return false;
+	}
+	var username = document.forms["myform"]["Username"].value;
+	console.log(username.length)
+	if(username == "" || username.length < 3 || username.length > 200){
+		$('#validatename').html("Username harus diisi... min 3 max 200 karakter")
+		return false;
+	}
+	var password = document.forms["myform"]["Password"].value;
+	if(password == "" || password.length < 8){
+		$('#validatepass').html("Password harus diisi... min 8 karakter")
+		return false;
+	}
+}
+
+function viewPassword() {
+  var x = document.getElementById("myInput");
+  if (x.type === "password") {
+    x.type = "text";
+  } else {
+    x.type = "password";
+  }
+}
+
+function validateEmail() {
+  var x = document.getElementById("validateEmail").pattern;
+  document.getElementById("demo").innerHTML = x;
+}
+
+</script>
+
+</html>

@@ -1,0 +1,33 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+
+<table th:each="item : ${variant}" class="table table-light">
+	<tr>
+		<td>Category</td>
+		<td th:text="${item.Category.Name}"></td>
+	</tr>
+	<tr>
+		<td>Initial</td>
+		<td th:text="${item.Initial}"></td>
+	</tr>
+	<tr>
+		<td>Name</td>
+		<td th:text="${item.Name}"></td>
+	</tr>
+	<tr>
+		<td>Active</td>
+		<td><input class="form-check-input" type="checkbox" th:checked="${item.Active}" disabled></td>
+	</tr>
+	<tr>
+		<td align="right"><button class="btn btn-warning" onclick="javascript:window.open('/variant/index', '_self')">Cancel</button></td>
+		<td><button class="btn btn-danger" th:value="${item.Id}" onclick="del(this.value)">Delete</button></td>
+	</tr>
+</table>
+
+<script>
+	function del(id){
+		window.open('/variant/del/' + id, '_self')
+	}
+</script>
+
+</html>

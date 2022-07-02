@@ -1,0 +1,312 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/layout}">
+<head>
+	<title>POS::Order</title>
+	
+</head>
+<body>
+
+<div layout:fragment="content">
+	<h1>Halaman Pesanan</h1>
+	
+	<table width="100%" cellpadding="5">
+		<thead>
+			<tr>
+				<td bgcolor="lightblue">
+					<button class="btn btn-primary" id="neworder" onclick="neworder()">New Order</button>
+					<button class="btn btn-danger" id="payment" onclick="payment()">Payment</button>
+					<button class="btn btn-success" id="newtrans" onclick="newtrans()">New Trans.</button>
+					<input type="hidden" class="" id="orderheaderid" readonly>
+					<input type="text" id="reference" style="float: right;" size="15" disabled>					
+				</td>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td id="datadetail"></td>
+			</tr>
+		</tbody>
+	</table>
+
+<script>
+	if($('#orderheaderid').val() == ""){
+		$('#neworder').prop('disabled',true)
+		$('#payment').prop('disabled',true)
+	}else{
+		datadetail();
+	}
+	
+	function datadetail(){
+		$.ajax({
+			url : '/api/orderdetail/get/' + $('#orderheaderid').val(),
+			type : 'get',
+			contentType : 'application/json',
+			success:function(result){
+				var total = 0;
+				var str = '<table class="table">';
+				str += '<tr>'
+				str += '<th>Product Name</th>'
+				str += '<th style="text-align:right;">Price</th>'
+				str += '<th style="text-align:right;">Quantity</th>'
+				str += '<th style="text-align:right;">Subtotal</th>'
+				str += '<th style="text-align:right;">Action</th>'
+				str += '</tr>'
+				for(i=0; i<result.length; i++){
+					str += '<tr>'
+					str += '<td>'+result[i].product.name+'</td>'
+					str += '<td align="right">'+result[i].price+'</td>'
+					str += '<td align="right">'+result[i].quantity+'</td>'
+					str += '<td align="right">'+(result[i].price * result[i].quantity)+'</td>'
+					str += '<td align="right"><button class="btn btn-warning" onclick="edit()"><i class="fa fa-pencil-square-o"></i></button><button class="btn btn-danger" onclick="delete_()"><i class="fa fa-trash"></i></button></td>'
+					str += '</tr>'
+					total += (result[i].price * result[i].quantity)
+				}
+				str += '<tr>'
+				str += '<td colspan="3"><b>Total</b></td>'
+				str += '<td align="right"><input type="text" id="totalamount" value="' + total + '" size="10" style="text-align:right;font-weight:bold;border-width:1px;" readonly></td>'
+				str += '<td></td>'
+				str += '</tr>'
+				str += '</table>'
+				$('#datadetail').html(str)
+			}
+		})
+	}
+	
+	function delete_(id){
+		var conf = window.confirm('Apakah Anda Yakin Ingin Menghapus Data Ini?')
+		if(conf){
+			$.ajax({
+				url:'/api/orderdetail/' + id,
+				type:'delete',
+				contentType:'application/json',
+				success:function(product){
+					conf = window.confirm("Data Telah Dihapus")
+					console.log(product)
+					location.replace('/order/index')
+					//reloadData()
+				}
+			})
+		}
+	}
+
+	function newtrans(){
+		var dnow = Date.now();
+		console.log(dnow)
+		
+		var data= '{'
+		data += '"reference":"'+dnow+'",'
+		data += '"amount":0'
+		data += '}'
+		
+		$.ajax({
+			url : '/api/orderheader',
+			type : 'post',
+			data : data,
+			contentType : 'application/json',
+			success:function(result){
+				console.log(result)
+				$('#reference').val(result.reference)
+				$('#orderheaderid').val(result.id)
+				$('#neworder').prop('disabled',false)
+				$('#payment').prop('disabled',true)
+				$('#newtrans').prop('disabled',true)
+			}
+		})
+	}
+
+	function neworder(){
+		var form = '<table class="table">'
+		form += '<tr>'
+		form += '<td>Produk</td>'
+		form += '<td><input class="form-control" type="hidden" id="productid" size="3" placeholder="Id" readonly><input type="text" class="form-control" id="product" placeholder="Nama Produk" onclick="searchproduct()"></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Harga</td>'
+		form += '<td><input type="text" class="form-control" id="price" placeholder="Harga"></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Jumlah Produk</td>'
+		form += '<td><input type="text" class="form-control" id="quantity" size="10" placeholder="Jumlah Barang" onchange="subtotal()"></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td>Subtotal</td>'
+		form += '<td><input type="text" class="form-control" placeholder="Subtotal" id="subtotal" readonly></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td colspan="2" align="right"><button class="btn btn-primary" onclick="simpan()">Simpan</button></td>'
+		form += '</tr>'
+		form += '</table>'
+		
+		$('#mymodal').modal('show')
+		$('.modal-title').html('Masukkan Data Pesanan Baru')
+		$('.modal-body').html(form)
+	}
+	
+	function searchproduct(){
+		var form = '<table class="table">'
+		form += '<tr>'
+		form += '<td width="90%"><input type="text" class="form-control" id="searchtext" style="width:100%;" placeholder="Masukkan Nama Produk atau Deskripsi Produk"></td>'
+		form += '<td width="90%"><button class="btn btn-warning" onclick="searchdatadetails()"><i class="fa fa-search"></i></button></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td colspan="2" id="searchdata"></td>'
+		form += '</tr>'
+		form += '</table>'
+		
+		$('#mymodal2').modal('show')
+		$('.modal-title2').html('Cari Produk')
+		$('.modal-body2').html(form)
+	}
+	
+	function searchdatadetails(){
+		var data = '<table class="table">'
+		data += '<thead>'
+		data += '<tr>'
+		data += '<td><b>Select</b></td>'
+		data += '<td><b>Initial</b></td>'
+		data += '<td><b>Name/Desc</b></td>'
+		data += '<td><b>Price</b></td>'
+		data += '<td><b>Stock</b></td>'
+		data += '</tr>'
+		data += '</thead>'
+		data += '<tbody id="pdata">'
+		data += '</tbody>'
+		data += '</table>'
+		
+		$('#searchdata').html(data);
+		
+		var txt = $('#searchtext').val();
+		
+		$.ajax({
+			url : '/api/product/search/' + txt.toLowerCase(),
+			type : 'get',
+			contentType : 'application/json',
+			success:function(result){
+				//console.log(result) //untuk mengecek hasil melalui console browser	
+				var str = '';
+				for(i=0; i<result.length; i++){
+					str += '<tr>'
+					str += '<td><button class="btn btn-warning" value="'+result[i].id+'" onclick="getproduct(this.value)"><i class="fa fa-check-circle"></i></button></td>'
+					str += '<td>'+result[i].initial+'</td>'
+					str += '<td>'+result[i].name+'<br>'+result[i].description+'</td>'
+					str += '<td>'+result[i].price+'</td>'
+					str += '<td>'+result[i].stock+'</td>'
+					str += '</tr>'
+				}
+				$('#pdata').html(str)
+			}
+		})
+	}
+	
+	function getproduct(id){
+		$.ajax({
+			url : '/api/product/' + id,
+			type : 'get',
+			contentType : 'application/json',
+			success:function(result){
+				$('#mymodal2').modal('hide')
+				$('#product').val(result.name)
+				$('#productid').val(result.id)
+				$('#price').val(result.price)
+			}
+		})
+	}
+	
+	function subtotal(){
+		var st = $('#price').val() * $('#quantity').val()
+		$('#subtotal').val(st)
+	}
+	
+	function simpan(){
+		var data = '{'
+		data += '"orderHeaderid":"'+$('#orderheaderid').val()+'",'
+		data += '"productId":'+$('#productid').val()+','
+		data += '"quantity":'+$('#quantity').val()+','
+		data += '"price":'+$('#price').val()
+		data += '}'
+		
+		$.ajax({
+			url : '/api/orderdetail',
+			type : 'post',
+			data : data,
+			contentType : 'application/json',
+			success:function(result){
+				console.log(result)
+				$('#mymodal').modal('hide')
+				datadetail();
+				$('#payment').prop('disabled',false)
+			}
+		})
+	}
+	
+	function payment(){
+		var form = '<table class="table">'
+		form += '<tr>'
+		form += '<td><b>Reference #</b></td>'
+		form += '<td><input type="text" class="form-control" id="refno" readonly></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td><b>Amount</b></td>'
+		form += '<td><input type="text" class="form-control" id="amount" readonly></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td><b>Cash</b></td>'
+		form += '<td><input type="text" class="form-control" id="cash" onchange="getchange(this.value)"></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td><b>Change</b></td>'
+		form += '<td id="change" style="font-weight:bold; color:red;"></td>'
+		form += '</tr>'
+		form += '<tr>'
+		form += '<td colspan="2"><button onclick="pay()" class="btn btn-warning"><i class="fa fa-shopping-cart"><b> Bayar</b></i></button></td>'
+		form += '<td><button onclick="" class="btn btn-light"></button></td>'
+		form += '</tr>'
+		form += '</table>'
+		
+		$('#mymodal').modal('show')
+		$('.modal-title').html('Payment')
+		$('.modal-body').html(form)
+		
+		var ref = $('#reference').val()
+		$('#refno').val(ref)
+		
+		var tot = $('#totalamount').val()
+		$('#amount').val(tot)
+	}
+	
+	function getchange(val){
+		var change = val - $('#amount').val()
+		$('#change').html(change)
+	}
+	
+	function pay(){
+		var data = '{'
+		data += '"reference":'+$('#refno').val()+','
+		data += '"amount":'+$('#amount').val()
+		data += '}'
+		
+		$.ajax({
+			url : '/api/orderheader/'+$('#orderheaderid').val(),
+			type : 'put',
+			data : data,
+			contentType : 'application/json',
+			success : function(result){
+				console.log(result)
+				$('#mymodal').modal('hide')
+				$('#newtrans').prop('disabled',false)
+				$('#payment').prop('disabled',true)
+				$('#neworder').prop('disabled',true)
+				$('#reference').val('')
+				$('#orderheaderid').val('')
+				$('#datadetail').html('')
+				
+			}
+		})
+	}
+</script>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/layout}">
+<head>
+	<title>POS::User</title>
+	
+</head>
+<body>
+<div layout:fragment="content">
+	<h1>Halaman Pengguna</h1>
+	
+	<p align="right">
+		<button class="btn btn-success" onclick="userform()">+ Tambah Pengguna</button>
+	</p>
+	
+	<table class="table table-striped" id="myTable">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Email</th>
+				<th>Username</th>
+				<th>Password</th>
+				<th>Full Name</th>
+				<th>Photo</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="item, iter:${listuser}">
+				<td th:text="${iter.count}"></td>
+				<td th:text="${item.Email}"></td>
+				<td th:text="${item.Username}"></td>
+				<td th:text="${item.Password}"></td>
+				<td th:text="${item.Fullname}"></td>
+				<td>
+					<a th:href="@{${'/images/' + item.Photo}}" onclick="openimage(this.value)" th:value="${item.Id}">
+						<img th:src="@{${'/images/' + item.Photo}}" height="50">
+					</a>
+						<button class="btn btn-success" onclick="openimage(this.value)" th:value="${item.Id}">
+							<span>
+								<i class="fa fad fa-image"></i>
+							</span>
+						</button>
+				</td>
+				<!--td th:text="${item.Fullname}"></td-->
+				<td>
+					<button th:value="${item.Id}" onclick="edituser(this.value)" type="button" class="btn btn-labeled btn-warning">
+			        	<span class="btn-label"><i class="fa fa-pencil-square-o"></i></span>
+			        </button>
+					<button th:value="${item.Id}" onclick="deleteuser(this.value)" type="button" class="btn btn-labeled btn-danger">
+			        	<span class="btn-label"><i class="fa fa-trash"></i></span>
+			        </button>
+				</td>
+			</tr>  
+		</tbody>
+	</table>
+	
+<script>
+	$(document).ready( function () {
+    	$('#myTable').DataTable();
+	})
+
+	function edituser(id){
+		$.ajax({
+			url:'/user/edit/' + id,
+			type:'get',
+			contentType:'html',
+			success:function(result){
+				//console.log(result) //melihat isi result
+				$("#mymodal").modal('show')
+				$(".modal-title").html('Ubah Data Pengguna')
+				$(".modal-body").html(result)
+			}
+		})
+	}
+	function deleteuser(id){
+		$.ajax({
+			url:'/user/delete/' + id,
+			type:'get',
+			contentType:'html',
+			success:function(result){
+				//console.log(result) //melihat isi result
+				$("#mymodal").modal('show')
+				$(".modal-title").html('Hapus Data Pengguna')
+				$(".modal-body").html(result)
+			}
+		})
+	}
+	
+	function userform(){
+		$.ajax({
+			url : '/user/form',
+			type : 'get',
+			contentType : 'html',
+			success:function(result){
+				$('#mymodal').modal('show')
+				$('.modal-title').html('Form Tambah Pengguna')
+				$('.modal-body').html(result)
+			}
+		})
+	}
+	
+	function openimage(id){
+		$.ajax({
+			url : '/user/getuser/' + id,
+			type : 'get',
+			contentType : 'html',
+			success:function(result){
+				$('#mymodal').modal('show')
+				$('.modal-title').html('Show Photo')
+				$('.modal-body').html(result)
+			}
+		})
+		
+	}
+	
+</script>
+	
+</div>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+
+<table th:each="item : ${users}" class="table table-light">
+	<tr>
+		<td>Email</td>
+		<td th:text="${item.Email}"></td>
+	</tr>
+	<tr>
+		<td>Initial</td>
+		<td th:text="${item.Username}"></td>
+	</tr>
+	<tr>
+		<td>Full Name</td>
+		<td><input type="checkbox" th:checked="${item.Fullname}" disabled></td>
+	</tr>
+	<tr>
+		<td align="right"><button class="btn btn-warning" onclick="javascript:window.open('/user/index', '_self')">Cancel</button></td>
+		<td><button class="btn btn-danger" th:value="${item.Id}" onclick="del(this.value)">Delete</button></td>
+	</tr>
+</table>
+
+<script>
+	function del(id){
+		window.open('/user/del/' + id, '_self')
+	}
+</script>
+
+</html>

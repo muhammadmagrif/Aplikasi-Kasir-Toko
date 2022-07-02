@@ -1,0 +1,24 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<form th:action="@{~/category/save}" th:object="${category}" method="post">
+<input type="hidden" th:field="*{Id}">
+	<table class="table table-bordered table-light" >
+		<tr>
+			<td>Initial</td>
+			<td><input type="text" th:field="*{Initial}" class="form-control" required></td>
+		</tr>
+		<tr>
+			<td>Name</td>
+			<td><input type="text" th:field="*{Name}" class="form-control" required></td>
+		</tr>
+		<tr>
+			<td>Active</td>
+			<td><input class="form-check-input" type="checkbox" th:field="*{Active}"><label class="form-check-label">Active?</label></td>
+		</tr>
+		<tr>
+			<td colspan="2"><button type="submit" class="btn btn-primary">Simpan</button></td>
+		</tr>
+	</table>
+</form>
+
+</html>

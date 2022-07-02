@@ -1,0 +1,101 @@
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{fragments/layout}">
+<head>
+	<title>POS::Kategori</title>
+	
+</head>
+<body>
+
+<div layout:fragment="content">
+	<h1>Halaman Kategori</h1>
+	
+	<p align="right">
+		<button class="btn btn-primary" onclick="topdf()"><i class="fa fas fa-cloud-download"></i> Ekspor Ke PDF</button>
+		<button class="btn btn-success" onclick="addform()"><i class="fa fas fa-plus-circle"></i> Tambah Kategori</button>
+	</p>
+	
+	<table class="table table-striped" id="myTable">
+		<thead>
+			<tr>
+				<th>#</th>
+				<th>Initial</th>
+				<th>Name</th>
+				<th>Active</th>
+				<th>Create By</th>
+				<th>Action</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="item, iter:${listcat}">
+				<td th:text="${iter.count}"></td>
+				<td th:text="${item.Initial}"></td>
+				<td th:text="${item.Name}"></td>
+				<td><input class="form-check-input" type="checkbox" th:checked="${item.Active}" disabled></td>
+				<td th:text="${item.Create_by}"></td>
+				<td class="btn-group" width="100%">
+					<button th:value="${item.Id}" onclick="editform(this.value)" type="button" class="btn btn-labeled btn-warning">
+			        	<span class="btn-label"><i class="fa fa-pencil-square-o"></i></span>
+			        </button>
+					<button th:value="${item.Id}" onclick="deleteform(this.value)" type="button" class="btn btn-labeled btn-danger">
+			        	<span class="btn-label"><i class="fa fa-trash"></i></span>
+			        </button>
+				</td>
+			</tr>  
+		</tbody>
+	</table>
+	
+<script>
+	$(document).ready( function () {
+    	$('#myTable').DataTable();
+	})
+
+	function addform(){
+		$.ajax({
+			url:'/category/form',
+			type:'get',
+			contentType:'html',
+			success:function(result){
+				//console.log(result)//melihat isi result
+				$("#mymodal").modal('show')
+				$(".modal-title").html('Tambah Data Kategori')
+				$(".modal-body").html(result)
+			}
+		})
+	}
+	function editform(id){
+		$.ajax({
+			url:'/category/edit/' + id,
+			type:'get',
+			contentType:'html',
+			success:function(result){
+				//console.log(result) //melihat isi result
+				$("#mymodal").modal('show')
+				$(".modal-title").html('Ubah Data Kategori')
+				$(".modal-body").html(result)
+			}
+		})
+	}
+	function deleteform(id){
+		$.ajax({
+			url:'/category/deleteform/' + id,
+			type:'get',
+			contentType:'html',
+			success:function(result){
+				//console.log(result) //melihat isi result
+				$("#mymodal").modal('show')
+				$(".modal-title").html('Hapus Data Kategori')
+				$(".modal-body").html(result)
+			}
+		})
+	}
+	
+	function topdf(){
+		window.open('/category/exportcategory', '_blank');
+	}
+</script>
+
+</div>
+
+</body>
+</html>

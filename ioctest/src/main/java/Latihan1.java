@@ -11,63 +11,6 @@ import java.util.stream.Stream;
 
 public class Latihan1 {
 	 public static void main(String[] args) throws IOException {
-
-	        // Array can also be a source of a Stream
-	        /*Stream<String> streamOfArray = Stream.of("a", "b", "c");
-	        streamOfArray.forEach(System.out::println);
-
-	        System.out.println("\n");
-	        
-	        // creating from existing array or of a part of an array:
-	        String[] arr = new String[] { "a", "b", "c" };
-	        Stream<String> streamOfArrayFull = Arrays.stream(arr);
-	        streamOfArrayFull.forEach(System.out::println);
-
-	        System.out.println("\n");
-	        
-	        Stream<String> streamOfArrayPart = Arrays.stream(arr, 1, 3);
-	        streamOfArrayPart.forEach(System.out::println);
-	        
-	        System.out.println("\n");
-	        
-	        Stream<Integer> stream = Stream.of(1,2,3,4,5,6,7,8,9);
-	        stream.forEach(p -> System.out.println(p));
-	        
-	        System.out.println("\n");
-	        
-	        Stream<Integer> stream2 = Stream.of( new Integer[]{1,2,3,4,5,6,7,8,9} );
-	        stream2.forEach(p -> System.out.println(p));
-	        
-	        System.out.println("\n");
-	        
-	        List<Integer> list = new ArrayList<Integer>();
-
-	        for(int i = 1; i< 10; i++){
-	              list.add(i);
-	        }
-
-	        Stream<Integer> stream3 = list.stream();
-	        stream3.forEach(p -> System.out.println(p));
-	        
-	        System.out.println("\n");
-	        
-	        Stream<Integer> randomNumbers = Stream
-	        	      .generate(() -> (new Random()).nextInt(100));
-
-	        	randomNumbers.limit(20).forEach(System.out::println);
-	        	
-	        System.out.println("\n");
-	        	
-	        IntStream stream4 = "12345_abcdefg".chars();
-	       	stream4.forEach(p -> System.out.println(p));
-
-	      	//OR
-
-	       	Stream<String> stream5 = Stream.of("A$B$C".split("\\$"));
-	       	stream5.forEach(p -> System.out.println(p));
-	       	
-	       	System.out.println("\n");
-	       	*/
 		 
 		 List<String> memberNames = new ArrayList<>();
 		 memberNames.add("Amitabh");

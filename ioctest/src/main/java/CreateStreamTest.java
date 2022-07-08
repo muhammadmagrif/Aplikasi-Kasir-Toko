@@ -13,61 +13,59 @@ public class CreateStreamTest {
 	 public static void main(String[] args) throws IOException {
 
 	        // Array can also be a source of a Stream
-	        /*Stream<String> streamOfArray = Stream.of("a", "b", "c");
-	        streamOfArray.forEach(System.out::println);
+		 Stream<String> streamOfArray = Stream.of("a", "b", "c");
+	     streamOfArray.forEach(System.out::println);
+	     
+	     System.out.println("\n");      
+	        
+	     // creating from existing array or of a part of an array:
+	     String[] arr = new String[] { "a", "b", "c" };
+	     Stream<String> streamOfArrayFull = Arrays.stream(arr);
+	     streamOfArrayFull.forEach(System.out::println);
 
-	        System.out.println("\n");
+	     System.out.println("\n");
 	        
-	        // creating from existing array or of a part of an array:
-	        String[] arr = new String[] { "a", "b", "c" };
-	        Stream<String> streamOfArrayFull = Arrays.stream(arr);
-	        streamOfArrayFull.forEach(System.out::println);
+	     Stream<String> streamOfArrayPart = Arrays.stream(arr, 1, 3);
+	     streamOfArrayPart.forEach(System.out::println);
+	        
+	     System.out.println("\n");
+	        
+	     Stream<Integer> stream = Stream.of(1,2,3,4,5,6,7,8,9);
+	     stream.forEach(p -> System.out.println(p));
+	       
+	     System.out.println("\n");
+	        
+	     Stream<Integer> stream2 = Stream.of( new Integer[]{1,2,3,4,5,6,7,8,9} );
+	     stream2.forEach(p -> System.out.println(p));
+	        
+	     System.out.println("\n");
+	        
+	     List<Integer> list = new ArrayList<Integer>();
 
-	        System.out.println("\n");
-	        
-	        Stream<String> streamOfArrayPart = Arrays.stream(arr, 1, 3);
-	        streamOfArrayPart.forEach(System.out::println);
-	        
-	        System.out.println("\n");
-	        
-	        Stream<Integer> stream = Stream.of(1,2,3,4,5,6,7,8,9);
-	        stream.forEach(p -> System.out.println(p));
-	        
-	        System.out.println("\n");
-	        
-	        Stream<Integer> stream2 = Stream.of( new Integer[]{1,2,3,4,5,6,7,8,9} );
-	        stream2.forEach(p -> System.out.println(p));
-	        
-	        System.out.println("\n");
-	        
-	        List<Integer> list = new ArrayList<Integer>();
+	     for(int i = 1; i< 10; i++){
+	            list.add(i);
+	     }
 
-	        for(int i = 1; i< 10; i++){
-	              list.add(i);
-	        }
-
-	        Stream<Integer> stream3 = list.stream();
-	        stream3.forEach(p -> System.out.println(p));
+	     Stream<Integer> stream3 = list.stream();
+	     stream3.forEach(p -> System.out.println(p));
 	        
-	        System.out.println("\n");
+	     System.out.println("\n");
 	        
-	        Stream<Integer> randomNumbers = Stream
-	        	      .generate(() -> (new Random()).nextInt(100));
+	     Stream<Integer> randomNumbers = Stream.generate(() -> (new Random()).nextInt(100));
 
-	        	randomNumbers.limit(20).forEach(System.out::println);
+	     randomNumbers.limit(20).forEach(System.out::println);
 	        	
-	        System.out.println("\n");
+	     System.out.println("\n");
 	        	
-	        IntStream stream4 = "12345_abcdefg".chars();
-	       	stream4.forEach(p -> System.out.println(p));
+	     IntStream stream4 = "12345_abcdefg".chars();
+	     stream4.forEach(p -> System.out.println(p));
 
-	      	//OR
+	     //OR
 
-	       	Stream<String> stream5 = Stream.of("A$B$C".split("\\$"));
-	       	stream5.forEach(p -> System.out.println(p));
+	     Stream<String> stream5 = Stream.of("A$B$C".split("\\$"));
+	     stream5.forEach(p -> System.out.println(p));
 	       	
-	       	System.out.println("\n");
-	       	*/
+	     System.out.println("\n");
 		 
 		 List<String> memberNames = new ArrayList<>();
 		 memberNames.add("Amitabh");
@@ -156,20 +154,20 @@ public class CreateStreamTest {
 			
 			System.out.println();
 			
-			List<Integer> list = new ArrayList<Integer>();
+			List<Integer> list2 = new ArrayList<Integer>();
 			for(int i = 1; i< 10; i++){
-			 list.add(i);
+			 list2.add(i);
 			}
 
 			//Here creating a parallel stream
-			Stream<Integer> stream = list.parallelStream();  
+			Stream<Integer> stream6 = list2.parallelStream();  
 
-			Integer[] evenNumbersArr = stream.filter(i -> i%2 == 0).toArray(Integer[]::new);
+			Integer[] evenNumbersArr = stream6.filter(i -> i%2 == 0).toArray(Integer[]::new);
 			System.out.print(evenNumbersArr);
 			
 			System.out.println("\n");
 			
-			List<Integer> list2 = Arrays.asList(2, 4, 1, 3, 7, 5, 9, 6, 8);
+			List<Integer> list3 = Arrays.asList(2, 4, 1, 3, 7, 5, 9, 6, 8);
 			 
 			Comparator<Integer> maxComparator = new Comparator<Integer>() {
 			   
@@ -179,7 +177,7 @@ public class CreateStreamTest {
 			  }
 			};
 
-			Optional<Integer> maxNumber = list2.stream()
+			Optional<Integer> maxNumber = list3.stream()
 			      .max(maxComparator);
 
 			System.out.println(maxNumber.get());

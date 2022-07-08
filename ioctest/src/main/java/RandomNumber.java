@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
-public class TesStream1 {
+public class RandomNumber {
 	 @SuppressWarnings("unused")
 	  public static void main(final String[] args) throws NoSuchAlgorithmException {
 	    Random random = new Random();

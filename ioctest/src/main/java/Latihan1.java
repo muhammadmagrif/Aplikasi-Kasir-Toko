@@ -37,6 +37,8 @@ public class Latihan1 {
          .map(String::toUpperCase)
          .forEach(System.out::println);
 		 
+		 //descending
+		 
 		 System.out.println();
 		 
 		 memberNames.forEach(System.out::println);
@@ -77,7 +79,7 @@ public class Latihan1 {
 			System.out.println();
 			
 			Optional<String> reduced = memberNames.stream()
-			        .reduce((s1,s2) -> s1 + "#" + s2);
+			        .reduce((s1,s2) -> s1 + "-" + s2);
 				 
 			reduced.ifPresent(System.out::println);
 			
@@ -92,8 +94,7 @@ public class Latihan1 {
 
 			String firstMatchedName = memberNames.stream()
 		            .filter((s) -> s.startsWith("A"))
-		            .findFirst()
-		                        .get();
+		            .findFirst().get();
 		 
 			System.out.println(firstMatchedName);    //Lokesh
 			
@@ -126,5 +127,24 @@ public class Latihan1 {
 			      .max(maxComparator);
 
 			System.out.println(maxNumber.get());
+			
+			System.out.println();
+			
+			List<String> stringList = new ArrayList<>();
+
+	        stringList.add("one");
+	        stringList.add("two");
+	        stringList.add("three");
+	        stringList.add("one");
+
+	        Stream<String> stream2 = stringList.stream();
+
+	        List<String> distinctStrings = stream2
+	                .distinct()
+	                .collect(Collectors.toList());
+
+	        System.out.println(distinctStrings);
+	        
+	        
 	 }
 }

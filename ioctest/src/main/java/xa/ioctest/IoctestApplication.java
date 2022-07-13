@@ -16,7 +16,7 @@ public class IoctestApplication {
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(Application.class);
         HelloWorld obj = (HelloWorld) context.getBean("helloWorld");
         obj.getMessage();
-        context.close();	
+        context.close();
     }
 
 }

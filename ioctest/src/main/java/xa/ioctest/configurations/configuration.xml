@@ -6,4 +6,8 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
  <bean id="helloWorld" class="xa.ioctest.classes.HelloWorld">
  <property name="message" value="Hello World!" />
  </bean>
+ 
+ <bean id="palindrome" class="xa.ioctest.classes.Palindrome">
+ <property name="kalimat" />
+ </bean>
 </beans>
